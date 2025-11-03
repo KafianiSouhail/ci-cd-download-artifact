@@ -4,6 +4,8 @@ on:
     branches:
       - main
       - master
+env:
+  NG_DATABASE_KEY: SARA123
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -53,4 +55,6 @@ jobs:
       - name: Ouput Files
         run: ls
       - name: Deploy
-        run: echo "Deploying..."
+        run: |
+          echo "Deploying..."
+          echo ${{env.NG_DATABASE_KEY}}
