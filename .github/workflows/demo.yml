@@ -1,76 +1,33 @@
-name: Deploy website
-on:
+name: Test Project
+on: 
   push:
-    branches:
-      - main
-      - master
-env:
-  NG_DATABASE_KEY: SARA123
-  SECRET_1_VAL: ${{secrets.SECRET_1}}
+  workflow_dispatch:
 jobs:
   test:
-    env: 
-      TEST_DATABASE_KEY: TEST_SARA123
-    environment: testing
     runs-on: ubuntu-latest
     steps:
       - name: Get code
-        uses: actions/checkout@v3
-      - name: Cache dependencies
-        uses: actions/cache@v4
+        uses: actions/checkout@v5
+      - name: Install node js
+        uses: actions/setup-node@v6
         with:
-          path: ~/.npm
-          key: deps-nopde-moduls-${{ hashFiles('**/package-lock.json') }}
+          node-version: 18
       - name: Install dependencies
         run: npm ci
-      - name: Lint code
-        run: npm run lint
-      - name: Test code
+      - name: Test
         run: npm run test
-      - name: Echo environment variables
-        run: echo "TEST JOB ENV VA ${{env.TEST_DATABASE_KEY}}"
-      - name: Declare and use an environment variable
-        env:
-          STEP_TEST_JOB_ENV_KEY: STEP_TEST_JOB_ENV_KEY_SARA_123
-        run: echo "STEP_ENV_VARIABLE $STEP_TEST_JOB_ENV_KEY"
-      - name: Use secret variables 1
-        run: echo "secret variables is $SECRET_1_VAL"
-      - name: Use secret variables 2
-        run: echo "secret variables is ${{secrets.SECRET_1}}"
-      - name: Use testing enironment sercrets
-        run: "echo testing env secrets ${{secrets.DB_KEY}}"  
-  build:
+  deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Get code
-        uses: actions/checkout@v3
-      - name: Cache dependencies
-        uses: actions/cache@v4
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Install nodejs
+        uses: actions/setup-node@v6
         with:
-          path: ~/.npm
-          key: deps-nopde-moduls-${{ hashFiles('**/package-lock.json') }}
-      
+          node-version: 18
       - name: Install dependencies
         run: npm ci
-      - name: Build website
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-content
-          path: dist
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: dist-content
-      - name: Ouput Files
-        run: ls
       - name: Deploy
-        run: |
-          echo "Deploying..."
-          echo ${{env.NG_DATABASE_KEY}}
+        run: echo "Deploying"  
+        
